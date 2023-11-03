@@ -30,7 +30,7 @@ from sys import exit
 def outfile_prep():
     # check if file exists and prompt user to delete
     if path.exists(outfile):
-        print("[!] Output file '{}' already exists".format(outfile))
+        print(f"[!] Output file '{outfile}' already exists")
         delete_old = input("[*] Do you want to delete and continue? [y/N]: ")
         if delete_old.strip() not in ['y', 'Y']:
             exit(0)
