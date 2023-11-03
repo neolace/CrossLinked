@@ -22,17 +22,15 @@ def main(args):
             if user not in tmp:
                 tmp.append(user)
 
-    openFile = open(args.outfile, 'a')
-    for account in tmp:
-        openFile.write("{}\n".format(account))
-    openFile.close()
-
-    print("\n[+] Username list created: {}\n".format(args.outfile))
+    with open(args.outfile, 'a') as openFile:
+        for account in tmp:
+            openFile.write(f"{account}\n")
+    print(f"\n[+] Username list created: {args.outfile}\n")
 
 def file_exists(parser, filename):
     # Used with argparse to check if input files exists
     if not path.exists(filename):
-        parser.error("Input file not found: {}".format(filename))
+        parser.error(f"Input file not found: {filename}")
     return [x.strip() for x in open(filename)]
 
 if __name__ == '__main__':

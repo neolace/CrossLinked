@@ -28,7 +28,7 @@ def o365_validateUser(user, timeout, headers={}, proxy=[], verbose=False):
         logger.fail([user])
 
 def gen_user(user, domain):
-    return user+'@'+domain if args.domain else user
+    return f'{user}@{domain}' if args.domain else user
 
 def main(args):
     logger.info(['Users', len(args.users)])

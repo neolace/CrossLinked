@@ -82,7 +82,7 @@ class CrossLinked():
 
     def user_output(self, resp):
         if self.user_count > self.output_count:
-            logger.info("{} : {}".format(self.user_count, resp.request.url))
+            logger.info(f"{self.user_count} : {resp.request.url}")
             self.output_count = self.user_count
 
     def pageParser(self, resp):
@@ -129,32 +129,37 @@ class CrossLinked():
             # Exception catch 1st letter last name - Fname L.
             tmp = name.split(' ')
             if len(tmp[0]) <= 1 or len(tmp[-1]) <=1:
-                raise Exception("\'{}\' Failed name parsing".format(link.text))
+                raise Exception(f"\'{link.text}\' Failed name parsing")
             elif tmp[0].endswith((".","|")) or tmp[-1].endswith((".","|")):
-                raise Exception("\'{}\' Failed name parsing".format(link.text))
+                raise Exception(f"\'{link.text}\' Failed name parsing")
 
             k = name.lower()
             if k not in self.linkedin:
-                self.linkedin[k] = {}
-                self.linkedin[k]['last'] = unidecode(name.split(' ')[1].lower())
+                self.linkedin[k] = {'last': unidecode(name.split(' ')[1].lower())}
                 self.linkedin[k]['first'] = unidecode(name.split(' ')[0].lower())
                 self.linkedin[k]['title'] = title.strip().lower()
                 self.linkedin[k]['format'] = formatter(args.nformat, self.linkedin[k]['first'], self.linkedin[k]['last'])
-                logger.debug("PASS: {} (SAFE:{}) - {}".format(self.engine.upper(), self.safe, link.text), fg='green')
+                logger.debug(
+                    f"PASS: {self.engine.upper()} (SAFE:{self.safe}) - {link.text}",
+                    fg='green',
+                )
                 return True
 
         except Exception as e:
-            logger.debug("ERR: {} (SAFE:{}) - {}".format(self.engine.upper(), self.safe, str(e)), fg='yellow')
+            logger.debug(
+                f"ERR: {self.engine.upper()} (SAFE:{self.safe}) - {str(e)}",
+                fg='yellow',
+            )
 
-        logger.debug("FAIL: {} (SAFE:{}) - {}".format(self.engine.upper(), self.safe, link.text), fg='red')
+        logger.debug(
+            f"FAIL: {self.engine.upper()} (SAFE:{self.safe}) - {link.text}",
+            fg='red',
+        )
         return False
 
 def extract_links(resp):
-    links = []
     soup = BeautifulSoup(resp.content, 'lxml')
-    for link in soup.findAll('a'):
-        links.append(link)
-    return links
+    return list(soup.findAll('a'))
 
 def formatter(nformat, first, last):
     name = nformat
@@ -165,7 +170,9 @@ def formatter(nformat, first, last):
     return name
 
 def getUsers(engine, args):
-    logger.info("Searching {} for valid employee names at \"{}\"".format(engine, args.company_name))
+    logger.info(
+        f'Searching {engine} for valid employee names at \"{args.company_name}\"'
+    )
     c = CrossLinked(engine,  args.company_name, args.timeout, 3, args.header, args.proxy, args.jitter, args.safe,args.debug)
     if engine in c.URL.keys():
         c.search()
@@ -188,7 +195,7 @@ def main(args):
         if args.verbose:
             logger.success("{:30} - {}".format(data['first']+" "+data['last'], data['title']))
         ledger.info(id)
-    logger.success("{} unique names added to {}!".format(len(names.keys()), args.outfile))
+    logger.success(f"{len(names.keys())} unique names added to {args.outfile}!")
 
 if __name__ == '__main__':
     banner()
